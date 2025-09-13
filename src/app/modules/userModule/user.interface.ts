@@ -7,24 +7,29 @@ enum Gender {
 }
 
 interface IUser extends Document {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  password: string;
-  status: string;
-  isEmailVerified: boolean;
+  fullName: string,
+  email: string,
+  password: string,
+  isEmailVerified: boolean,
+  dob: string,
+  image: string,
+  phone: string,
+  country: string,
+  address: string,
+  isDeleted: boolean,
+  status: string,
   verification?: {
     code: string;
     expireDate: Date;
   };
   role: string;
-  isSocial?: boolean;
   fcmToken?: string;
-  survey: Types.ObjectId;
-  gender: Gender;
-  referralCode?: string;
-  point?: number;
+  currentCredit?: number;
+  documents: {
+    type: string;
+    isVerified: boolean;
+  }[];
+  isVerified: boolean;
 
   // method declarations
   comparePassword(userPlanePassword: string): boolean

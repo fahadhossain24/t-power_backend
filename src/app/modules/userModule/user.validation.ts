@@ -8,30 +8,17 @@ const statusEnum = z.enum(['active', 'blocked', 'disabled'], {
 // Validation schema for user creation
 const createUserZodSchema = z.object({
   body: z.object({
-    firstName: z
+    fullName: z
       .string({
-        required_error: 'First name is required!',
+        required_error: 'Full name is required!',
       })
-      .min(1, 'First name must not be empty!'),
-
-    lastName: z
-      .string({
-        required_error: 'Last name is required!',
-      })
-      .min(1, 'Last name must not be empty!'),
+      .min(1, 'Full name must not be empty!'),
 
     email: z
       .string({
         required_error: 'Email is required!',
       })
       .email('Invalid email address!'),
-
-    phone: z
-      .string({
-        required_error: 'Phone number is required!',
-      })
-      .min(10, 'Phone number must be at least 10 digits!')
-      .regex(/^\d+$/, 'Phone number must only contain digits!'),
 
     password: z
       .string({
@@ -49,8 +36,6 @@ const createUserZodSchema = z.object({
         expireDate: z.date().nullable().optional(),
       })
       .optional(),
-
-    isSocial: z.boolean().optional().default(false),
 
     fcmToken: z.string().nullable().optional(),
   }),

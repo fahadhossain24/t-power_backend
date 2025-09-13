@@ -20,7 +20,8 @@ const envSchema = z.object({
   GMAIL_APP_USER: z.string().email('Invalid email format'),
   GMAIL_APP_PASSWORD: z.string().min(1, 'Gmail app password is required'),
 
-  FRONTEND_URL: z.string().min(1, 'Frontend url is required')
+  FRONTEND_URL: z.string().min(1, 'Frontend url is required'),
+  SERVER_URL: z.string().min(1, 'Server url is required'),
 });
 
 const envVars = envSchema.parse(process.env);
@@ -39,5 +40,6 @@ export default {
   gmail_app_user: envVars.GMAIL_APP_USER,
   gmail_app_password: envVars.GMAIL_APP_PASSWORD,
 
-  frontend_url: envVars.FRONTEND_URL
+  frontend_url: envVars.FRONTEND_URL,
+  server_url: envVars.SERVER_URL,
 };

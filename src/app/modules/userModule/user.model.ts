@@ -2,11 +2,14 @@ import mongoose, { Types } from 'mongoose';
 import IUser from './user.interface';
 import validator from 'validator';
 import bcrypt from 'bcrypt';
+import { ENUM_USER_ROLE } from '../../../enums/user';
 
 export const userSchema = new mongoose.Schema<IUser>(
   {
-    firstName: String,
-    lastName: String,
+    fullName: {
+      type: String,
+      required: true,
+    },
     email: {
       type: String,
       unique: true,
@@ -20,8 +23,7 @@ export const userSchema = new mongoose.Schema<IUser>(
     },
     phone: {
       type: String,
-      unique: true,
-      required: true,
+      default: "",
     },
     password: {
       type: String,
@@ -35,8 +37,8 @@ export const userSchema = new mongoose.Schema<IUser>(
     },
     role: {
       type: String,
-      enum: ['user'],
-      default: 'user',
+      enum: [ENUM_USER_ROLE.CLIENT, ENUM_USER_ROLE.PROVIDER],
+      required: true,
     },
     status: {
       type: String,
@@ -56,13 +58,42 @@ export const userSchema = new mongoose.Schema<IUser>(
         default: null,
       },
     },
-    isSocial: {
-      type: Boolean,
-      default: false,
-    },
     fcmToken: {
       type: String,
       default: null,
+    },
+    dob: {
+      type: String,
+      default: "",
+      trim: true
+    },
+    address: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    country: {
+      type: String,
+      default: "",
+    },
+    image: {
+      type: String,
+      default: "",
+    },
+    documents: [{
+      type: String,
+      isVerified: {
+        type: Boolean,
+        default: false,
+      }
+    }],
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    currentCredit: {
+      type: Number,
+      default: 0,
     },
   },
   {
