@@ -3,9 +3,6 @@ import userRouter from '../modules/userModule/user.routes';
 import adminRouter from '../modules/adminModule/admin.routes';
 import userAuthRouter from '../modules/authModule/userAuthModule/auth.routes';
 import adminAuthRouter from '../modules/authModule/adminAuthModule/auth.routes';
-import aboutUsRouter from '../modules/aboutUsModule/abountUs.routes';
-import privacyPolicyRouter from '../modules/privacyPolicyModule/privacyPolicy.routes';
-import termsConditionRouter from '../modules/termsConditionModule/termsCondition.routes';
 
 const routersVersionOne = express.Router();
 
@@ -18,8 +15,5 @@ routersVersionOne.use('/user/auth', userAuthRouter);
 routersVersionOne.use('/admin/auth', adminAuthRouter);
 
 // settings
-routersVersionOne.use('/about-us', aboutUsRouter);
-routersVersionOne.use('/privacy-policy', privacyPolicyRouter);
-routersVersionOne.use('/terms-condition', termsConditionRouter);
 
 export default routersVersionOne;
