@@ -16,7 +16,6 @@ import { helmetConfig } from './config/helmet.config';
 import { compressionOptions } from './config/compression.config';
 import compression from 'compression';
 import swaggerUi from 'swagger-ui-express'
-import { swaggerSpec } from './docs/swagger';
 
 const app: Application = express();
 
@@ -44,7 +43,7 @@ app.use('/', routers);
 app.get('/', rootDesign);
 
 // swagger route
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 app.get('/health_check', (req: Request, res: Response) => {
   res.status(StatusCodes.OK).json({

@@ -10,7 +10,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['production', 'development', 'test']).default('development'),
   PORT: z.preprocess((val) => Number(val), z.number().default(5003)),
   SERVER_NAME: z.string().min(1, 'Server name is required'),
-  MONGODB_URL: z.string().min(1, 'MongoDB connection URL is required'),
+  DATABASE_URL: z.string().min(1, 'Database connection URL is required'),
 
   JWT_ACCESS_TOKEN_SECRET: z.string().min(1, 'Access token secret key is required'),
   JWT_ACCESS_TOKEN_EXPIRESIN: z.string().default('14d'),
@@ -30,7 +30,7 @@ export default {
   node_env: envVars.NODE_ENV,
   server_port: envVars.PORT,
   server_name: envVars.SERVER_NAME,
-  mongodb_url: envVars.MONGODB_URL,
+  database_url: envVars.DATABASE_URL,
 
   jwt_access_token_secret: envVars.JWT_ACCESS_TOKEN_SECRET,
   jwt_access_token_expiresin: envVars.JWT_ACCESS_TOKEN_EXPIRESIN,
