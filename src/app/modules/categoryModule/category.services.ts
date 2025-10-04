@@ -22,27 +22,27 @@ class CategoryService {
     if (search) {
       pipeline.push({
         $search: {
-          index: 'category', // this must be created in MongoDB Atlas
+          index: "category", // make sure this index exists in MongoDB Atlas
           compound: {
             should: [
               {
                 autocomplete: {
                   query: search,
-                  path: 'name',
+                  path: "name",
                   fuzzy: { maxEdits: 1, prefixLength: 1 },
                 },
               },
               {
                 autocomplete: {
                   query: search,
-                  path: 'metaDescription',
+                  path: "metaDescription",
                   fuzzy: { maxEdits: 1, prefixLength: 1 },
                 },
               },
               {
                 autocomplete: {
                   query: search,
-                  path: 'slug',
+                  path: "slug",
                   fuzzy: { maxEdits: 1, prefixLength: 1 },
                 },
               },

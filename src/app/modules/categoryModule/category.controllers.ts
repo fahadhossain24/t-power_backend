@@ -18,9 +18,13 @@ class CategoryController {
     const categoryBody = req.body
     const files = req.files
 
-    categoryBody.visibility['isActive'] = req.body.visibility === 'true';
-    categoryBody.visibility['navbar'] = req.body.visibility === 'true';
-    categoryBody.visibility['homepage'] = req.body.visibility === 'true';
+    const visibility = {
+      isActive: req.body.isActive === 'true',
+      navbar: req.body.navbar === 'true',
+      homepage: req.body.homepage === 'true',
+    }
+
+    categoryBody.visibility = visibility;
 
     if (files && files.image) {
       const imagePath = await fileUploader(files as FileArray, `${categoryBody.name}-image`, 'image');
@@ -44,16 +48,17 @@ class CategoryController {
   });
 
   retrieveAllCategory = asyncHandler(async (req: Request, res: Response) => {
-    const { search } = req.query;
-    let visibility: any = req.query.visibility;
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    const { search, page = "1", limit = "10", ...visibilityFilters } = req.query;
 
-    if (visibility) {
-      visibility = visibility === 'true'
+  const parsedPage = Number(page) || 1;
+  const parsedLimit = Number(limit) || 10;
+
+    const parsedVisibility: Record<string, boolean> = {};
+    for (const [key, value] of Object.entries(visibilityFilters)) {
+      parsedVisibility[key] = value === "true";
     }
-
-    const result = await CategoryServices.retrieveAllCategory(search as string, visibility, page, limit);
+    console.log(search)
+    const result = await CategoryServices.retrieveAllCategory(search as string, parsedVisibility, parsedPage, parsedLimit);
 
     sendResponse<ICategory[]>(res, {
       statusCode: 200,
