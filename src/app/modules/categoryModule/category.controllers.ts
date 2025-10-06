@@ -50,14 +50,14 @@ class CategoryController {
   retrieveAllCategory = asyncHandler(async (req: Request, res: Response) => {
     const { search, page = "1", limit = "10", ...visibilityFilters } = req.query;
 
-  const parsedPage = Number(page) || 1;
-  const parsedLimit = Number(limit) || 10;
+    const parsedPage = Number(page) || 1;
+    const parsedLimit = Number(limit) || 10;
 
     const parsedVisibility: Record<string, boolean> = {};
     for (const [key, value] of Object.entries(visibilityFilters)) {
       parsedVisibility[key] = value === "true";
     }
-    console.log(search)
+    // console.log(search)
     const result = await CategoryServices.retrieveAllCategory(search as string, parsedVisibility, parsedPage, parsedLimit);
 
     sendResponse<ICategory[]>(res, {
@@ -88,7 +88,13 @@ class CategoryController {
     const categoryBody = req.body
     const files = req.files
 
-    categoryBody.visibility = req.body.visibility === 'true';
+    const visibility = {
+      isActive: req.body.isActive === 'true',
+      navbar: req.body.navbar === 'true',
+      homepage: req.body.homepage === 'true',
+    }
+
+    categoryBody.visibility = visibility;
 
     const category = await CategoryServices.retrieveSpecificCategoryById(id);
     if (!category) {
@@ -150,7 +156,7 @@ class CategoryController {
 
   retrieveCategoriesWithSomeProducts = asyncHandler(async (req: Request, res: Response) => {
     const { count } = req.query
-    if(!Number(count)){
+    if (!Number(count)) {
       throw new CustomError.BadRequestError("Count must need!")
     }
     const productsWithCategory = await categoryServices.retrieveCategoriesWithSomeProducts(Number(count))

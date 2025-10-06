@@ -35,7 +35,7 @@ class CategoryService {
               {
                 autocomplete: {
                   query: search,
-                  path: "metaDescription",
+                  path: "metaTitle",
                   fuzzy: { maxEdits: 1, prefixLength: 1 },
                 },
               },
@@ -86,6 +86,7 @@ class CategoryService {
   }
 
   async retrieveSpecificCategory(slug: string) {
+    console.log(slug)
     return await Category.findOne({ slug, isDeleted: false });
   }
 

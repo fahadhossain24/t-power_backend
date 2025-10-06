@@ -45,7 +45,7 @@ const categorySchema = new mongoose.Schema<ICategory>({
     timestamps: true,
 })
 
-categorySchema.index({ name: 'text', description: 'text', slug: 'text' });
+categorySchema.index({ name: 'text', metaTitle: 'text', slug: 'text' });
 
 const Category = mongoose.model<ICategory>("category", categorySchema)
 
