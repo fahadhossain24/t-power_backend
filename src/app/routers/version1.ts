@@ -3,6 +3,7 @@ import adminRouter from '../modules/adminModule/admin.routes';
 import categoryRouter from '../modules/categoryModule/category.routes';
 import newsRouter from '../modules/newsModule/news.routes';
 import newsCatRouter from '../modules/newsCategoryModule/newsCat.routes';
+import subscriberRouter from '../modules/subscribeModule/subscriber.routes';
 
 const routersVersionOne = express.Router();
 
@@ -13,6 +14,7 @@ routersVersionOne.use('/admin', adminRouter);
 routersVersionOne.use('/category', categoryRouter);
 routersVersionOne.use('/news', newsRouter);
 routersVersionOne.use('/newsCategory', newsCatRouter);
+routersVersionOne.use('/subscriber', subscriberRouter);
 
 // settings
 
