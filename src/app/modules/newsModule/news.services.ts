@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { INews } from './news.interface';
 import News from './news.model';
 
@@ -7,38 +8,55 @@ class NewsService {
     return await news.save();
   }
 
-  async getNews(search?: string, page = 1, limit = 10) {
+  async getNews(search?: string, category?: string, page = 1, limit = 10) {
     const skip = (page - 1) * limit;
     const pipeline: any[] = [];
 
-    console.log(search)
+    const matchStage: any = {};
 
-    // Search stage using Atlas Full-Text Search
+    // Search filter
     if (search) {
-      pipeline.push({
-        $match: {
-          $or: [
-            { title: { $regex: search, $options: 'i' } }, // 'i' = case-insensitive
-            { content: { $regex: search, $options: 'i' } },
-            { slug: { $regex: search, $options: 'i' } },
-            { metaTitle: { $regex: search, $options: 'i' } },
-            { metaDescription: { $regex: search, $options: 'i' } },
-          ],
-        },
-      });
+      matchStage.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { content: { $regex: search, $options: 'i' } },
+        { slug: { $regex: search, $options: 'i' } },
+        { metaTitle: { $regex: search, $options: 'i' } },
+        { metaDescription: { $regex: search, $options: 'i' } },
+      ];
     }
 
-    // Populate Categories
+    // Category filter
+    if (category) {
+      matchStage.category = new mongoose.Types.ObjectId(category);
+    }
+
+    // Apply match stage if needed
+    if (Object.keys(matchStage).length > 0) {
+      pipeline.push({ $match: matchStage });
+    }
+
+    // Populate category directly (only _id and title)
     pipeline.push({
       $lookup: {
-        from: 'newsCategories',
-        localField: 'newsCategory',
+        from: 'newscategories', // MongoDB collection name
+        localField: 'category',
         foreignField: '_id',
-        as: 'newsCategory',
+        as: 'category',
+        pipeline: [
+          { $project: { _id: 1, title: 1 } }, // only _id and title
+        ],
       },
-    })
+    });
 
-    // Sort, skip, limit for pagination
+    // Convert populated array → single object
+    pipeline.push({
+      $unwind: {
+        path: '$category',
+        preserveNullAndEmptyArrays: true,
+      },
+    });
+
+    // Sort and paginate
     pipeline.push(
       { $sort: { createdAt: -1 } },
       { $skip: skip },
@@ -47,8 +65,16 @@ class NewsService {
 
     // Execute aggregation
     const data = await News.aggregate(pipeline);
-    const totalData = await News.countDocuments();
 
+    // Get total count with same filters
+    const countPipeline: any[] = [];
+    if (Object.keys(matchStage).length > 0) countPipeline.push({ $match: matchStage });
+    countPipeline.push({ $count: 'total' });
+
+    const totalResult = await News.aggregate(countPipeline);
+    const totalData = totalResult[0]?.total || 0;
+
+    // Return result
     return {
       meta: {
         currentPage: page,
@@ -64,8 +90,11 @@ class NewsService {
     return await News.findById(id);
   }
 
-  async getNewsBySlug(slug: string){
-    return await News.findOne({slug})
+  async getNewsBySlug(slug: string) {
+    return await News.findOne({ slug }).populate({
+      path: 'category',
+      select: 'title',
+    })
   }
 
   async retrieveSpecificNews(slug: string) {

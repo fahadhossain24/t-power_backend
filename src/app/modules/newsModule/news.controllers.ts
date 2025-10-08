@@ -24,15 +24,9 @@ class NewsController {
     //   newsData.slug = generateSlug(newsData.title);
     // }
 
-    // create new category if not exist
-    if (newsData.category) {
-      const newCategory = await createNewsCategory({ title: newsData.category });
-      newsData.category = newCategory._id;
-    }
-
     const newsWithSlug = await newsServices.getNewsBySlug(newsData.slug)
     if (newsWithSlug) {
-      throw new CustomError.BadRequestError("Title shouldn't duplicate!")
+      throw new CustomError.BadRequestError("Slug shouldn't duplicate!")
     }
 
     if (files && files.thambnail) {
@@ -42,6 +36,12 @@ class NewsController {
 
     if (newsData.tags) {
       newsData.tags = JSON.parse(newsData.tags)
+    }
+
+    // create new category if not exist
+    if (newsData.category) {
+      const newCategory = await createNewsCategory({ title: newsData.category });
+      newsData.category = newCategory._id;
     }
 
     const newNews = await newsServices.createNews(newsData);
@@ -79,11 +79,11 @@ class NewsController {
   });
 
   getNews = asyncHandler(async (req: Request, res: Response) => {
-    const { search } = req.query;
+    const { search, category } = req.query;
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
 
-    const news = await newsServices.getNews(search as string, page, limit);
+    const news = await newsServices.getNews(search as string, category as string, page, limit);
     // console.log(news)
 
     sendResponse(res, {
@@ -149,15 +149,16 @@ class NewsController {
       throw new CustomError.NotFoundError('News not found!');
     }
 
-    if(newsData.category){
+    if (newsData.category) {
       // check existing category
-      const existingCategory = await newsCatService.getNewsCategoryById(newsData.category);
+      const existingCategory = await newsCatService.getNewsCategoryByTitle(newsData.category);
+
       if (!existingCategory) {
         // create new category
         const newCategory = await createNewsCategory({ title: newsData.category });
         newsData.category = newCategory._id;
       }
-      else{
+      else {
         newsData.category = existingCategory._id;
       }
     }
