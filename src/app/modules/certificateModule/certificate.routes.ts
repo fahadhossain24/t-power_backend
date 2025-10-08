@@ -5,10 +5,8 @@ import certificateController from './certificate.controller'
 
 const certificateRoute = express.Router()
 
-certificateRoute.use(authentication(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN))
-
-certificateRoute.post('/create', certificateController.createCertificate)
+certificateRoute.post('/create', authentication(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN), certificateController.createCertificate)
 certificateRoute.get('/all', certificateController.getCertificates)
-certificateRoute.delete('/delete/:id', certificateController.deleteCertificate)
+certificateRoute.delete('/delete/:id', authentication(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN), certificateController.deleteCertificate)
 
 export default certificateRoute

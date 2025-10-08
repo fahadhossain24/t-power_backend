@@ -7,6 +7,7 @@ import subscriberRouter from '../modules/subscribeModule/subscriber.routes';
 import adminAuthRouter from '../modules/adminAuthModule/auth.routes';
 import partnerRouter from '../modules/partnerModule/partner.routes';
 import certificateRoute from '../modules/certificateModule/certificate.routes';
+import aboutUsRouter from '../modules/aboutUsModule/abountUs.routes';
 
 const routersVersionOne = express.Router();
 
@@ -21,6 +22,7 @@ routersVersionOne.use('/newsCategory', newsCatRouter);
 routersVersionOne.use('/subscriber', subscriberRouter);
 routersVersionOne.use('/web-setting/partner', partnerRouter);
 routersVersionOne.use('/web-setting/certificate', certificateRoute);
+routersVersionOne.use('/web-setting/about-us', aboutUsRouter);
 
 // settings
 
