@@ -35,7 +35,6 @@ const deleteSpecificFaq = asyncHandler(async (req: Request, res: Response) => {
     statusCode: StatusCodes.OK,
     status: 'success',
     message: 'Faq deleted successfully',
-    data: deletedFaq,
   });
 });
 
