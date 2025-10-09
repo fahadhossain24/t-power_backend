@@ -23,18 +23,6 @@ const softwareSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    screenDetailes: [{
-        title: {
-            type: String,
-            unique: true,
-        },
-        description: {
-            type: String,
-        },
-        image: {
-            type: String,
-        }
-    }],
 }, {
     timestamps: true
 })
