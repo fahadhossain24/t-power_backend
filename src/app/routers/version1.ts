@@ -11,6 +11,7 @@ import aboutUsRouter from '../modules/aboutUsModule/abountUs.routes';
 import faqRouter from '../modules/faqModule/faq.routes';
 import softwareRouter from '../modules/softwareModule/software.routes';
 import screenRouter from '../modules/screenModule/screen.routes';
+import contactUsRouter from '../modules/contactUsModule/contactUs.routes';
 
 const routersVersionOne = express.Router();
 
@@ -29,6 +30,7 @@ routersVersionOne.use('/web-setting/about-us', aboutUsRouter);
 routersVersionOne.use('/web-setting/faq', faqRouter);
 routersVersionOne.use('/web-setting/software', softwareRouter)
 routersVersionOne.use('/web-setting/screen', screenRouter)
+routersVersionOne.use('/web-setting/contact-us', contactUsRouter)
 
 // settings
 
