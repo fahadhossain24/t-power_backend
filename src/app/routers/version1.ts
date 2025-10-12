@@ -13,6 +13,7 @@ import softwareRouter from '../modules/softwareModule/software.routes';
 import screenRouter from '../modules/screenModule/screen.routes';
 import contactUsRouter from '../modules/contactUsModule/contactUs.routes';
 import heroRouter from '../modules/heroModule/hero.routes';
+import productRouter from '../modules/productModule/product.routes';
 
 const routersVersionOne = express.Router();
 
@@ -33,6 +34,7 @@ routersVersionOne.use('/web-setting/software', softwareRouter)
 routersVersionOne.use('/web-setting/screen', screenRouter)
 routersVersionOne.use('/web-setting/contact-us', contactUsRouter)
 routersVersionOne.use('/web-setting/hero', heroRouter)
+routersVersionOne.use('/product', productRouter)
 
 // settings
 
