@@ -11,4 +11,6 @@ screenRouter.get('/retrieve/software/:id', screenControllers.getScreenContentByS
 
 screenRouter.patch('/update/:id', authentication(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN), screenControllers.updateSpecificScreenContent)
 
+screenRouter.delete('/delete/:id', authentication(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN), screenControllers.deleteSpecificScreenContent)
+
 export default screenRouter

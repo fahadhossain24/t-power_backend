@@ -77,10 +77,28 @@ const updateSpecificSoftwareContent = asyncHandler(async (req: Request, res: Res
   })
 })
 
+const deleteSpecificSoftwareContent = asyncHandler(async (req: Request, res: Response) => {
+  const {id} = req.params;
+  if(!id){
+    throw new CustomError.BadRequestError("Please provide software id!")
+  }
+
+  const softwareContent = await softwareServices.deleteSoftwareContent(id)
+  if(!softwareContent.deletedCount){
+    throw new CustomError.BadRequestError("Failed to delete software content!")
+  }
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    status: "success",
+    message: "Software content deleted",
+  })
+})
 
 
 export default {
   createSoftwareContent,
   getSoftwareContent,
-  updateSpecificSoftwareContent
+  updateSpecificSoftwareContent,
+  deleteSpecificSoftwareContent
 }

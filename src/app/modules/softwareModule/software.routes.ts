@@ -11,4 +11,6 @@ softwareRouter.get('/retrieve', softwareControllers.getSoftwareContent)
 
 softwareRouter.patch('/update/:id', authentication(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN), softwareControllers.updateSpecificSoftwareContent)
 
+softwareRouter.delete('/delete/:id', authentication(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN), softwareControllers.deleteSpecificSoftwareContent)
+
 export default softwareRouter

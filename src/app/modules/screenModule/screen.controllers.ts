@@ -83,10 +83,28 @@ const updateSpecificScreenContent = asyncHandler(async (req: Request, res: Respo
   })
 })
 
+const deleteSpecificScreenContent = asyncHandler(async (req: Request, res: Response) => {
+  const {id} = req.params;
+  if(!id){
+    throw new CustomError.BadRequestError("Please provide screen id!")
+  }
+
+  const screenContent = await screenServices.deleteScreenContent(id)
+  if(!screenContent.deletedCount){
+    throw new CustomError.BadRequestError("Failed to delete screen content!")
+  }
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    status: "success",
+    message: "Screen content deleted",
+  })
+})
 
 
 export default {
   createScreenContent,
   getScreenContentBySoftwareId,
-  updateSpecificScreenContent
+  updateSpecificScreenContent,
+  deleteSpecificScreenContent
 }
