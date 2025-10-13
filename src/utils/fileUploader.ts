@@ -28,7 +28,7 @@ const fileUploader: FileUploader = async (files, directory, imageName) => {
     const filePath = path.join(folderPath, fileName);
     await file.mv(filePath);
 
-    return `${config.server_url}/v1/${filePath}`;
+    return `${config.server_url}/${filePath}`;
   } else if (files[imageName].length > 0) {
     // Handle multiple file uploads
     const filePaths: string[] = [];
@@ -36,7 +36,7 @@ const fileUploader: FileUploader = async (files, directory, imageName) => {
       const fileName = item.name;
       const filePath = path.join(folderPath, fileName);
       await item.mv(filePath);
-      filePaths.push(`${config.server_url}/v1/${filePath}`); // Collect all file paths
+      filePaths.push(`${config.server_url}/${filePath}`); // Collect all file paths
     }
 
     return filePaths;
