@@ -40,14 +40,17 @@ const getSpecificProductZodSchema = z.object({
 // Validation for product retrieval query filters
 const retrieveAllProductsZodSchema = z.object({
   query: z.object({
-    page: z.string().transform(Number).refine(val => val > 0, { message: 'Page must be a positive number.' }),
-    limit: z.string().transform(Number).refine(val => val > 0, { message: 'Limit must be a positive number.' }),
+    page: z.string().transform(Number).refine(val => val > 0, { message: 'Page must be a positive number.' }).optional(),
+    limit: z.string().transform(Number).refine(val => val > 0, { message: 'Limit must be a positive number.' }).optional(),
     search: z.string().optional(),
     visibility: z.enum(['true', 'false']).optional(),
+    viewOnRootPage: z.enum(['true', 'false']).optional(),
     inStock: z.enum(['on', 'off']).optional(),
     tags: z.union([z.string(), z.array(z.string())]).optional(),
-    minPrice: z.string().transform(Number).optional(),
-    maxPrice: z.string().transform(Number).optional(),
+    minPrice: z.string().transform(Number).refine(val => val >= 0, { message: 'Min price must be a non-negative number.' }).optional(),
+    maxPrice: z.string().transform(Number).refine(val => val >= 0, { message: 'Max price must be a non-negative number.' }).optional(),
+    sortBy: z.string().optional(),
+    sortOrder: z.enum(['asc', 'desc']).optional(),
     category: z.string().optional(),
   }),
 });

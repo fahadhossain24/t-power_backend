@@ -132,12 +132,11 @@ class ProductService {
     async retrieveAllProducts(
         search?: string,
         visibility?: boolean,
+        viewOnRootPage?: boolean,
         inStock?: 'on' | 'off',
         page = 1,
-        limit = 10,
+        limit = 20,
         filters?: {
-            brand?: string;
-            optionToView?: string;
             tags?: string[];
             minPrice?: number;
             maxPrice?: number;
@@ -149,7 +148,9 @@ class ProductService {
         const skip = (page - 1) * limit;
         const pipeline: any[] = [];
 
-        // 1. Atlas Full-text Search
+        /** -------------------------
+         * 1. Atlas Full-text Search
+         * -------------------------- */
         if (search) {
             pipeline.push({
                 $search: {
@@ -190,41 +191,58 @@ class ProductService {
             });
         }
 
-        // 2. Match Stage
+        /** -------------------------
+         * 2. Match Stage (filters)
+         * -------------------------- */
         const matchStage: any = { isDeleted: false };
 
         if (visibility !== undefined) matchStage.visibility = visibility;
-
+        if (viewOnRootPage !== undefined) matchStage.viewOnRootPage = viewOnRootPage;
         if (inStock) matchStage.inStock = inStock;
 
-        if (filters?.brand) matchStage.brand = filters.brand;
+        // Tags filter
+        if (filters?.tags?.length) matchStage.tags = { $in: filters.tags };
 
-        if (filters?.optionToView) {
-            matchStage.optionToView = { $in: [filters.optionToView] };
-        }
-
-        if (filters?.tags && filters.tags.length > 0)
-            matchStage.tags = { $in: filters.tags };
-
+        // Price range
         if (filters?.minPrice !== undefined || filters?.maxPrice !== undefined) {
             matchStage.price = {};
             if (filters.minPrice !== undefined) matchStage.price.$gte = filters.minPrice;
             if (filters.maxPrice !== undefined) matchStage.price.$lte = filters.maxPrice;
         }
 
+        // Category filter
         if (filters?.category && mongoose.Types.ObjectId.isValid(filters.category)) {
             matchStage.categories = { $in: [new mongoose.Types.ObjectId(filters.category)] };
         }
 
         pipeline.push({ $match: matchStage });
 
-        // 3. Sort
-        pipeline.push({ $sort: { [sortBy]: sortOrder } });
+        /** -------------------------
+         * 3. Sorting Logic
+         * -------------------------- */
+        const sortStage: Record<string, number> = {};
 
-        // 4. Pagination
+        // Primary rule: search results should respect searchPriority first
+        sortStage.searchPriority = -1;
+
+        // Handle A–Z or Z–A cases
+        if (sortBy === 'name' && (sortOrder === 1 || sortOrder === -1)) {
+            sortStage.name = sortOrder;
+        } else {
+            // Default custom sorting
+            sortStage[sortBy] = sortOrder;
+        }
+
+        pipeline.push({ $sort: sortStage });
+
+        /** -------------------------
+         * 4. Pagination
+         * -------------------------- */
         pipeline.push({ $skip: skip }, { $limit: limit });
 
-        // 5. Populate Categories
+        /** -------------------------
+         * 5. Lookup Categories
+         * -------------------------- */
         pipeline.push({
             $lookup: {
                 from: 'categories',
@@ -234,46 +252,45 @@ class ProductService {
             },
         });
 
-        // 6. Lookup Ratings and Calculate Aggregates
-        pipeline.push(
-            {
-                $lookup: {
-                    from: 'ratings',
-                    let: { productId: '$_id' },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: { $eq: ['$productId', '$$productId'] },
-                            },
-                        },
-                        {
-                            $group: {
-                                _id: null,
-                                averageRating: { $avg: '$rating' },
-                                totalRatingCount: { $sum: 1 },
-                            },
-                        },
-                    ],
-                    as: 'ratingStats',
-                },
-            },
-            {
-                $addFields: {
-                    averageRating: {
-                        $ifNull: [{ $arrayElemAt: ['$ratingStats.averageRating', 0] }, 0],
-                    },
-                    totalRatingCount: {
-                        $ifNull: [{ $arrayElemAt: ['$ratingStats.totalRatingCount', 0] }, 0],
-                    },
-                },
-            },
-            {
-                $project: {
-                    ratingStats: 0, // remove temp field
-                },
-            }
-        );
+        /** -------------------------
+         * 6. Ratings Aggregation
+         * -------------------------- */
+        // pipeline.push(
+        //     {
+        //         $lookup: {
+        //             from: 'ratings',
+        //             let: { productId: '$_id' },
+        //             pipeline: [
+        //                 { $match: { $expr: { $eq: ['$productId', '$$productId'] } } },
+        //                 {
+        //                     $group: {
+        //                         _id: null,
+        //                         averageRating: { $avg: '$rating' },
+        //                         totalRatingCount: { $sum: 1 },
+        //                     },
+        //                 },
+        //             ],
+        //             as: 'ratingStats',
+        //         },
+        //     },
+        //     {
+        //         $addFields: {
+        //             averageRating: {
+        //                 $ifNull: [{ $arrayElemAt: ['$ratingStats.averageRating', 0] }, 0],
+        //             },
+        //             totalRatingCount: {
+        //                 $ifNull: [{ $arrayElemAt: ['$ratingStats.totalRatingCount', 0] }, 0],
+        //             },
+        //         },
+        //     },
+        //     {
+        //         $project: { ratingStats: 0 },
+        //     }
+        // );
 
+        /** -------------------------
+         * 7. Execute and count
+         * -------------------------- */
         const data = await Product.aggregate(pipeline);
         const totalData = await Product.countDocuments(matchStage);
 
@@ -287,6 +304,8 @@ class ProductService {
             data,
         };
     }
+
+
 
     async retrieveProductById(id: string) {
         return await Product.findById(id).populate('categories');

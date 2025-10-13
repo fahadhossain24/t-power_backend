@@ -31,28 +31,34 @@ class ProductController {
     uploadFiles = asyncHandler(async (req: Request, res: Response) => {
         const { id } = req.params;
         const files = req.files;
-        let result;
 
         const product = await ProductServices.retrieveProductById(id)
         if (!product) {
             throw new CustomError.NotFoundError('Product not found!');
         }
 
-        if (files && files.images) {
-            const images: any = await fileUploader(files as FileArray, `product-images`, 'images');
-            result = await ProductServices.updateProduct(id, { images });
-        }else if(files && files.userGuide){
-            const documents: any = await fileUploader(files as FileArray, `product-documents`, 'userGuide');
-            result = await ProductServices.updateProduct(id, { userGuide: documents });
-        }else if(files && files.installationGuide){
-            const documents: any = await fileUploader(files as FileArray, `product-documents`, 'installationGuide');
-            result = await ProductServices.updateProduct(id, { installationGuide: documents });
-        }else if(files && files.license){
-            const documents: any = await fileUploader(files as FileArray, `product-documents`, 'license');
-            result = await ProductServices.updateProduct(id, { license: documents });
-        }else{
-            throw new CustomError.BadRequestError('File missing!');
+        // Map of allowed file fields and their respective folders
+        const fileConfig: Record<string, string> = {
+            images: 'images',
+            userGuide: 'userGuide',
+            installationGuide: 'installationGuide',
+            license: 'license',
+        };
+
+        const updatePayload: Record<string, any> = {};
+
+        for (const key of Object.keys(fileConfig)) {
+            if (files && files[key]) {
+                const uploadedFiles: any = await fileUploader(files as FileArray, fileConfig[key], key);
+                updatePayload[key] = uploadedFiles;
+            }
         }
+
+        if (Object.keys(updatePayload).length === 0) {
+            throw new CustomError.BadRequestError('No valid file fields provided!');
+        }
+
+        const result = await ProductServices.updateProduct(id, updatePayload);
 
 
         sendResponse<IProduct>(res, {
@@ -69,36 +75,36 @@ class ProductController {
             visibility,
             inStock,
             category,
-            brand,
-            optionToView,
+            viewOnRootPage,
             tags,
             minPrice,
             maxPrice,
         } = req.query;
 
         const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit) || 10;
-        const sortBy = req.query.sortBy as string || 'createdAt';
-        const sortOrder = req.query.sortOrder === 'desc' ? -1 : 1; // default desc
+        const limit = Number(req.query.limit) || 20; // default 20 per page
+
+        // Handle sorting logic
+        let sortBy = (req.query.sortBy as string) || 'createdAt';
+        let sortOrder: number = req.query.sortOrder === 'desc' ? -1 : 1;
+
         let categorySlugToId;
         if (category) {
-            const categoryBySlug = await categoryServices.retrieveSpecificCategory(category as string)
+            const categoryBySlug = await categoryServices.retrieveSpecificCategory(category as string);
             if (!categoryBySlug) {
                 throw new CustomError.NotFoundError('Category not found!');
             }
-
-            categorySlugToId = categoryBySlug._id
+            categorySlugToId = categoryBySlug._id;
         }
 
         const result = await ProductServices.retrieveAllProducts(
             search as string,
             visibility === 'true' ? true : visibility === 'false' ? false : undefined,
+            viewOnRootPage === 'true' ? true : viewOnRootPage === 'false' ? false : undefined,
             inStock as 'on' | 'off',
             page,
             limit,
             {
-                brand: brand as string,
-                optionToView: optionToView as string,
                 tags: tags
                     ? Array.isArray(tags)
                         ? (tags as string[])
@@ -120,6 +126,7 @@ class ProductController {
             data: result.data,
         });
     });
+
 
 
     retrieveSpecificProduct = asyncHandler(async (req: Request, res: Response) => {
