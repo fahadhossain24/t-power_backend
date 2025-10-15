@@ -77,6 +77,7 @@ class ProductController {
             category,
             viewOnRootPage,
             tags,
+            spec,
             minPrice,
             maxPrice,
         } = req.query;
@@ -113,6 +114,7 @@ class ProductController {
                 minPrice: minPrice ? Number(minPrice) : undefined,
                 maxPrice: maxPrice ? Number(maxPrice) : undefined,
                 category: categorySlugToId as string,
+                spec: spec ? String(spec) : undefined,
             },
             sortBy,
             sortOrder
@@ -169,7 +171,7 @@ class ProductController {
             statusCode: StatusCodes.OK,
             status: 'success',
             message: 'Product updated successfully',
-            data: result,
+            // data: result,
         });
     });
 

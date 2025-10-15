@@ -141,6 +141,7 @@ class ProductService {
             minPrice?: number;
             maxPrice?: number;
             category?: string;
+            spec?: string;
         },
         sortBy: string = 'createdAt',
         sortOrder: number = -1
@@ -215,6 +216,14 @@ class ProductService {
             matchStage.categories = { $in: [new mongoose.Types.ObjectId(filters.category)] };
         }
 
+        if (filters?.spec) {
+            const regex = new RegExp(filters.spec, 'i'); // case-insensitive regex
+            matchStage.$or = [
+                { 'specification.value': regex },
+                { 'specification.key': regex }
+            ];
+        }
+
         pipeline.push({ $match: matchStage });
 
         /** -------------------------
@@ -251,11 +260,6 @@ class ProductService {
                 as: 'categories',
             },
         });
-
-        /** -------------------------
-         * 6. Ratings Aggregation
-         * -------------------------- */
-        // pipeline.push(
         //     {
         //         $lookup: {
         //             from: 'ratings',
