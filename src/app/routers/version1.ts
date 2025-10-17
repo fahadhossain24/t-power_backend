@@ -15,6 +15,9 @@ import contactUsRouter from '../modules/contactUsModule/contactUs.routes';
 import heroRouter from '../modules/heroModule/hero.routes';
 import productRouter from '../modules/productModule/product.routes';
 import queryRouter from '../modules/queryModule/query.routes';
+import conversationRouter from '../modules/conversationModule/conversation.routes';
+import messageRouter from '../modules/messageModule/message.routes';
+import attachmentRouter from '../modules/attachmentModule/attachment.routes';
 
 const routersVersionOne = express.Router();
 
@@ -37,6 +40,9 @@ routersVersionOne.use('/web-setting/contact-us', contactUsRouter)
 routersVersionOne.use('/web-setting/hero', heroRouter)
 routersVersionOne.use('/product', productRouter)
 routersVersionOne.use('/query', queryRouter)
+routersVersionOne.use('/conversation', conversationRouter)
+routersVersionOne.use('/message', messageRouter)
+routersVersionOne.use('/attachment', attachmentRouter)
 
 // settings
 
