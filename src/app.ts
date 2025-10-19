@@ -34,7 +34,7 @@ app.use(compression(compressionOptions))
 app.use(helmetConfig)
 app.use(fileUpload());
 app.use('/v1/uploads', express.static(path.join('uploads')));
-app.use(applyRateLimit());
+// app.use(applyRateLimit());
 
 // application middleware
 app.use('/', routers);
