@@ -15,7 +15,7 @@ class QueryController {
     // Validate referenced product
     const product = await productServices.retrieveProductById(queryData.productRef)
     if (!product) {
-      throw new CustomError.NotFoundError('Product not found!')
+      // throw new CustomError.NotFoundError('Product not found!')
     }
 
     // Optional: Validate minimum order quantity (if business logic requires)
