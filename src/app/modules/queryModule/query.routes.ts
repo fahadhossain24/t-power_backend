@@ -10,25 +10,25 @@ const queryRouter = express.Router()
 // Create a new query
 queryRouter.post(
   '/create',
-  authentication(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
+  // authentication(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
   requestValidator(QueryValidationZodSchema.createQueryZodSchema),
   QueryController.createQuery
 )
 
 // Retrieve all queries (with optional search & pagination)
-queryRouter.get('/retrieve/all', QueryController.retrieveAllQueries)
+queryRouter.get('/retrieve/all', authentication(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN), QueryController.retrieveAllQueries)
 
 // Bulk update (admin only)
 queryRouter.patch(
   '/update/bulk',
-  authentication(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
+  // authentication(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
   QueryController.queryBulkUpdate
 )
 
 // Bulk delete (admin only)
 queryRouter.delete(
   '/delete/bulk',
-  authentication(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
+  // authentication(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
   QueryController.queryBulkDelete
 )
 
@@ -42,7 +42,7 @@ queryRouter.get(
 // Update specific query by ID (admin only)
 queryRouter.patch(
   '/update/:id',
-  authentication(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
+  // authentication(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
   requestValidator(QueryValidationZodSchema.getSpecificQueryZodSchema),
   QueryController.updateQuery
 )
