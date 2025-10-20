@@ -7,7 +7,7 @@ import { ENUM_USER_ROLE } from '../../../enums/user';
 const contactUsRouter = express.Router();
 
 // Route to create or update About Us content (only accessible to admin or super-admin)
-contactUsRouter.put('/create', authentication(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN), authorization('super-admin', 'admin'), contactUsControllers.createContactUs);
+contactUsRouter.put('/create', authentication(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN), contactUsControllers.createContactUs);
 contactUsRouter.get('/retrieve', contactUsControllers.getContactUs);
 
 export default contactUsRouter;
