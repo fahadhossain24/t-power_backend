@@ -18,6 +18,7 @@ import queryRouter from '../modules/queryModule/query.routes';
 import conversationRouter from '../modules/conversationModule/conversation.routes';
 import messageRouter from '../modules/messageModule/message.routes';
 import attachmentRouter from '../modules/attachmentModule/attachment.routes';
+import portfolioRoutes from '../modules/portfolioModule/portfolio.routes';
 
 const routersVersionOne = express.Router();
 
@@ -38,6 +39,7 @@ routersVersionOne.use('/web-setting/software', softwareRouter)
 routersVersionOne.use('/web-setting/screen', screenRouter)
 routersVersionOne.use('/web-setting/contact-us', contactUsRouter)
 routersVersionOne.use('/web-setting/hero', heroRouter)
+routersVersionOne.use('/web-setting/portfolio', portfolioRoutes)
 routersVersionOne.use('/product', productRouter)
 routersVersionOne.use('/query', queryRouter)
 routersVersionOne.use('/conversation', conversationRouter)
