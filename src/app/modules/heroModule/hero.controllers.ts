@@ -230,7 +230,49 @@ const getHero = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+// controller for update slide hero
+const updateSlideHero = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const files = req.files as any;
+  const { removedImg } = req.body;
+
+  // Find hero safely
+  const hero = await Hero.findById(id);
+  if (!hero) {
+    throw new CustomError.NotFoundError('No Hero found!');
+  }
+
+  hero.multipleHeroImages = hero.multipleHeroImages || [];
+
+  let newImages: string[] = [];
+  if (files?.newImg) {
+    const uploaded = await fileUploader(
+      files,
+      `hero-attachment-${Date.now()}`,
+      'newImg'
+    );
+    newImages = Array.isArray(uploaded) ? uploaded : [uploaded];
+  }
+  if (removedImg) {
+    hero.multipleHeroImages = hero.multipleHeroImages.filter(
+      (img) => img !== removedImg
+    );
+  }
+
+  hero.multipleHeroImages.push(...newImages);
+
+  await hero.save();
+
+  return sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    status: 'success',
+    message: 'Hero updated successfully',
+    data: hero,
+  });
+});
+
 export default {
   createHero,
   getHero,
+  updateSlideHero,
 };

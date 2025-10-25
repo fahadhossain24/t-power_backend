@@ -9,5 +9,6 @@ const heroRouter = express.Router();
 // Route to create or update About Us content (only accessible to admin or super-admin)
 heroRouter.put('/create', authentication(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN), heroControllers.createHero);
 heroRouter.get('/retrieve', heroControllers.getHero);
+heroRouter.patch('/update-slide-hero/:id', authentication(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN), heroControllers.updateSlideHero);
 
 export default heroRouter;
