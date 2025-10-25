@@ -19,6 +19,7 @@ import conversationRouter from '../modules/conversationModule/conversation.route
 import messageRouter from '../modules/messageModule/message.routes';
 import attachmentRouter from '../modules/attachmentModule/attachment.routes';
 import portfolioRoutes from '../modules/portfolioModule/portfolio.routes';
+import dashboardMatricRouter from '../modules/dashboardMatrix/dashboardMatrix.routes';
 
 const routersVersionOne = express.Router();
 
@@ -45,6 +46,7 @@ routersVersionOne.use('/query', queryRouter)
 routersVersionOne.use('/conversation', conversationRouter)
 routersVersionOne.use('/message', messageRouter)
 routersVersionOne.use('/attachment', attachmentRouter)
+routersVersionOne.use('/dashboard-matrix', dashboardMatricRouter)
 
 // settings
 

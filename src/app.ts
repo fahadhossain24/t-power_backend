@@ -16,6 +16,7 @@ import { helmetConfig } from './config/helmet.config';
 import { compressionOptions } from './config/compression.config';
 import compression from 'compression';
 import swaggerUi from 'swagger-ui-express'
+import { trackVisitor } from './app/middlewares/trackVisitor';
 
 const app: Application = express();
 
@@ -29,6 +30,7 @@ if (config.node_env !== 'test') {
   app.use(errorHandler);
 }
 
+app.use(trackVisitor)
 app.use(cookieParser());
 app.use(compression(compressionOptions))
 app.use(helmetConfig)
