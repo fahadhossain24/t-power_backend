@@ -216,7 +216,8 @@ const createHero = asyncHandler(async (req: Request, res: Response) => {
 
 // Controller to get About Us content
 const getHero = asyncHandler(async (req: Request, res: Response) => {
-  const hero = await Hero.find();
+  const query = req.query
+  const hero = await Hero.find(query);
 
   if (hero.length == 0) {
     throw new CustomError.NotFoundError('No Hero found!');

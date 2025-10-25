@@ -31,7 +31,8 @@ const createPortfolio = asyncHandler(async(req: Request, res: Response) => {
 })
 
 const getPortfolio = asyncHandler(async(req: Request, res: Response) => {
-    const portfolios = await portfolioServices.getPortfolio()
+    const query = req.query
+    const portfolios = await portfolioServices.getPortfolio(query)
     if(portfolios.length === 0){
         throw new CustomError.BadRequestError("Failed to get portfolio!")
     }
