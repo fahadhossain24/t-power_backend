@@ -5,7 +5,7 @@ const heroSchema = new mongoose.Schema<IHero>(
   {
     heroType: {
       type: String,
-      enum: ['slide', 'landing', 'ev_charger', 'kehua_inverter', 'energy_storage', 'about_us', 'contact_us', 'software', 'news'],
+      enum: ['slide', 'product', 'portfolio', 'about_us', 'contact_us', 'news'],
       required: true
     },
     title: String,

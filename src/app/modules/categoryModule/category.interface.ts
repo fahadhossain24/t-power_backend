@@ -12,6 +12,7 @@ export interface ICategory extends Document {
     isDeleted: boolean;
     metaTitle: string;
     metaDescription: string;
+    productCount: number;
     createdAt: Date;
     updatedAt: Date;
 }

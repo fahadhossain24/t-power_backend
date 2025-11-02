@@ -1,9 +1,10 @@
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import { IScreen } from './screen.interface';
 
 const screenSchema = new mongoose.Schema({
     softwareId: {
-        type: String,
+        type: Types.ObjectId,
+        ref: "software",
         required: true
     },
     title: {

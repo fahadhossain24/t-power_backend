@@ -60,6 +60,8 @@ class CategoryController {
     // console.log(search)
     const result = await CategoryServices.retrieveAllCategory(search as string, parsedVisibility, parsedPage, parsedLimit);
 
+    console.log(result.data)
+
     sendResponse<ICategory[]>(res, {
       statusCode: 200,
       status: 'success',

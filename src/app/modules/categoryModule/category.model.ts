@@ -41,6 +41,10 @@ const categorySchema = new mongoose.Schema<ICategory>({
         type: Boolean,
         default: false,
     },
+    productCount: {
+        type: Number,
+        default: 0
+    }
 }, {
     timestamps: true,
 })

@@ -10,10 +10,22 @@ import CustomError from '../../errors';
 import fileRemover from '../../../utils/fileRemover';
 import { generateSlug } from '../../../utils/slugify';
 import categoryServices from '../categoryModule/category.services';
+import productServices from './product.services';
+import Product from './product.model';
 
 class ProductController {
     createProduct = asyncHandler(async (req: Request, res: Response) => {
         const productBody = req.body;
+        await Promise.all(
+            req.body.categories.map(async (cat: any) => {
+                const category = await categoryServices.retrieveSpecificCategoryById(cat);
+                if (category) {
+                    category.productCount++;
+                    await category.save();
+                }
+            })
+        );
+
         const result = await ProductServices.createProduct(productBody);
         if (!result) {
             throw new CustomError.BadRequestError('Failed to create product!');
@@ -129,8 +141,6 @@ class ProductController {
         });
     });
 
-
-
     retrieveSpecificProduct = asyncHandler(async (req: Request, res: Response) => {
         const result = await ProductServices.retrieveSpecificProduct(req.params.slug);
         if (!result) {
@@ -178,10 +188,20 @@ class ProductController {
     deleteSpecificProduct = asyncHandler(async (req: Request, res: Response) => {
         const { id } = req.params;
 
-        const existingProduct = await ProductServices.retrieveProductById(id);
+        const existingProduct = await ProductServices.retrieveSpecificProductById(id);
         if (!existingProduct) {
             throw new CustomError.NotFoundError('Product not found!');
         }
+
+        await Promise.all(
+            existingProduct.categories.map(async (cat: any) => {
+                const category = await categoryServices.retrieveSpecificCategoryById(cat);
+                if (category && !existingProduct.isDeleted) {
+                    category.productCount--;
+                    await category.save();
+                }
+            })
+        );
 
         if (existingProduct.isDeleted) {
             throw new CustomError.BadRequestError('Product already deleted!');
