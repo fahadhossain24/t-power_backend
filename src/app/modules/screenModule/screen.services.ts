@@ -8,7 +8,10 @@ class ScreenService {
     }
 
     async getScreenContentBySoftwareId(id: string) {
-        return await Screen.find({softwareId: id})
+        return await Screen.find({softwareId: id}).populate({
+            path: 'softwareId',
+            select: ''
+        })
     }
 
     async findScreenByTitle(title: string){

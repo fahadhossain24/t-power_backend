@@ -309,10 +309,11 @@ class ProductService {
         };
     }
 
-
-
     async retrieveProductById(id: string) {
         return await Product.findById(id).populate('categories');
+    }
+    async retrieveSpecificProductById(id: string) {
+        return await Product.findById(id);
     }
 
     async retrieveSpecificProduct(slug: string) {
