@@ -5,8 +5,8 @@ const createPortfolio = async (data: Partial<IPortfolio>) => {
     return await Portfolio.create(data)
 }
 
-const getPortfolio = async () => {
-    return await Portfolio.find()
+const getPortfolio = async (query: any) => {
+    return await Portfolio.find(query)
 }
 
 const deletePortfolio = async (id: string) => {

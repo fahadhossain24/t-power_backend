@@ -16,9 +16,9 @@ const createHero = asyncHandler(async (req: Request, res: Response) => {
     throw new CustomError.BadRequestError("Hero type is required")
   }
 
-  if (!files) {
-    throw new CustomError.BadRequestError("Image file is required")
-  }
+  // if (!files) {
+  //   throw new CustomError.BadRequestError("Image file is required")
+  // }
 
   if (heroData.heroType !== 'slide' && heroData.heroType !== 'landing' && heroData.heroType !== 'ev_charger' && heroData.heroType !== 'kehua_inverter' && heroData.heroType !== 'energy_storage' && heroData.heroType !== 'about_us' && heroData.heroType !== 'contact_us' && heroData.heroType !== 'software' && heroData.heroType !== 'news') {
     throw new CustomError.BadRequestError("Invalid hero type")
@@ -216,7 +216,8 @@ const createHero = asyncHandler(async (req: Request, res: Response) => {
 
 // Controller to get About Us content
 const getHero = asyncHandler(async (req: Request, res: Response) => {
-  const hero = await Hero.find();
+  const query = req.query
+  const hero = await Hero.find(query);
 
   if (hero.length == 0) {
     throw new CustomError.NotFoundError('No Hero found!');
@@ -230,7 +231,49 @@ const getHero = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+// controller for update slide hero
+const updateSlideHero = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const files = req.files as any;
+  const { removedImg } = req.body;
+
+  // Find hero safely
+  const hero = await Hero.findById(id);
+  if (!hero) {
+    throw new CustomError.NotFoundError('No Hero found!');
+  }
+
+  hero.multipleHeroImages = hero.multipleHeroImages || [];
+
+  let newImages: string[] = [];
+  if (files?.newImg) {
+    const uploaded = await fileUploader(
+      files,
+      `hero-attachment-${Date.now()}`,
+      'newImg'
+    );
+    newImages = Array.isArray(uploaded) ? uploaded : [uploaded];
+  }
+  if (removedImg) {
+    hero.multipleHeroImages = hero.multipleHeroImages.filter(
+      (img) => img !== removedImg
+    );
+  }
+
+  hero.multipleHeroImages.push(...newImages);
+
+  await hero.save();
+
+  return sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    status: 'success',
+    message: 'Hero updated successfully',
+    data: hero,
+  });
+});
+
 export default {
   createHero,
   getHero,
+  updateSlideHero,
 };
