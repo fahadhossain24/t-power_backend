@@ -7,6 +7,10 @@ const softwareSchema = new mongoose.Schema({
         unique: true,
         required: true
     },
+    slug: {
+        type: String,
+        unique: true
+    },
     description: {
         type: String,
         required: true

@@ -5,6 +5,7 @@ import CustomError from "../../errors";
 import sendResponse from "../../../shared/sendResponse";
 import { StatusCodes } from "http-status-codes";
 import fileUploader from "../../../utils/fileUploader";
+import { generateSlug } from "../../../utils/slugify";
 
 const createSoftwareContent = asyncHandler(async (req: Request, res: Response) => {
   const softwareData = req.body;
@@ -19,6 +20,11 @@ const createSoftwareContent = asyncHandler(async (req: Request, res: Response) =
   if (existingSoftware) {
     throw new CustomError.BadRequestError('Software with this title already exists!');
   }
+
+
+  // make slug
+  const slug = generateSlug(softwareData.title)
+  softwareData.slug = slug;
 
   // Upload mockup image
   const mockupImageUrl = await fileUploader(softwareFile, 'software', 'mockupImage');

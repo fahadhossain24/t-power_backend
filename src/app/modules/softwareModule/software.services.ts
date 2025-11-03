@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { ISoftware } from "./software.interface";
 import Software from "./software.model";
 
@@ -9,6 +10,10 @@ class SoftwareService {
 
     async getSoftwareContent() {
         return await Software.find()
+    }
+
+    async retrieveSpecificSoftwareBySlug(slug: string){
+        return await Software.findOne({slug})
     }
 
     async findSoftwareByTitle(title: string){

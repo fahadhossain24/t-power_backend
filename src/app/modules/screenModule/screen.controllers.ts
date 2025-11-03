@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import asyncHandler from "../../../shared/asyncHandler";
-import softwareServices from "./screen.services";
+import softwareServices from "../softwareModule/software.services";
 import CustomError from "../../errors";
 import sendResponse from "../../../shared/sendResponse";
 import { StatusCodes } from "http-status-codes";
@@ -41,13 +41,19 @@ const createScreenContent = asyncHandler(async (req: Request, res: Response) => 
 })
 
 const getScreenContentBySoftwareId = asyncHandler(async (req: Request, res: Response) => {
-  const {id} = req.params;
-  if(!id){
+  const { id } = req.params;
+  if (!id) {
     throw new CustomError.BadRequestError("Please provide software id!")
   }
-  const screenContent = await screenServices.getScreenContentBySoftwareId(id)
-  if (screenContent.length == 0) {
-    throw new CustomError.BadRequestError("Failed to get screen content!")
+  let screenContent = []
+  const retrieveSoftware = await softwareServices.retrieveSpecificSoftwareBySlug(id)
+  if (retrieveSoftware) {
+    screenContent = await screenServices.getScreenContentBySoftwareId(retrieveSoftware._id as unknown as string)
+    if (screenContent.length == 0) {
+      throw new CustomError.BadRequestError("Failed to get screen content!")
+    }
+  } else {
+    throw new CustomError.BadRequestError("No Software found")
   }
 
   sendResponse(res, {
@@ -59,20 +65,20 @@ const getScreenContentBySoftwareId = asyncHandler(async (req: Request, res: Resp
 })
 
 const updateSpecificScreenContent = asyncHandler(async (req: Request, res: Response) => {
-  const {id} = req.params;
+  const { id } = req.params;
   const screenFile = req.files;
-  if(!id){
+  if (!id) {
     throw new CustomError.BadRequestError("Please provide screen id!")
   }
 
-  if(screenFile){
+  if (screenFile) {
     const mockupImageUrl = await fileUploader(screenFile, 'screen', 'mockupImage');
     req.body.mockupImage = mockupImageUrl
   }
 
   const screenContent = await screenServices.updateScreenContent(id, req.body)
   console.log(screenContent)
-  if(!screenContent.modifiedCount){
+  if (!screenContent.modifiedCount) {
     throw new CustomError.BadRequestError("Failed to update screen content!")
   }
 
@@ -84,13 +90,13 @@ const updateSpecificScreenContent = asyncHandler(async (req: Request, res: Respo
 })
 
 const deleteSpecificScreenContent = asyncHandler(async (req: Request, res: Response) => {
-  const {id} = req.params;
-  if(!id){
+  const { id } = req.params;
+  if (!id) {
     throw new CustomError.BadRequestError("Please provide screen id!")
   }
 
   const screenContent = await screenServices.deleteScreenContent(id)
-  if(!screenContent.deletedCount){
+  if (!screenContent.deletedCount) {
     throw new CustomError.BadRequestError("Failed to delete screen content!")
   }
 
