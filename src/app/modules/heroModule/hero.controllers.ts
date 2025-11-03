@@ -20,7 +20,7 @@ const createHero = asyncHandler(async (req: Request, res: Response) => {
   //   throw new CustomError.BadRequestError("Image file is required")
   // }
 
-  if (heroData.heroType !== 'slide' && heroData.heroType !== 'landing' && heroData.heroType !== 'ev_charger' && heroData.heroType !== 'kehua_inverter' && heroData.heroType !== 'energy_storage' && heroData.heroType !== 'about_us' && heroData.heroType !== 'contact_us' && heroData.heroType !== 'software' && heroData.heroType !== 'news') {
+  if (heroData.heroType !== 'slide' && heroData.heroType !== 'product' && heroData.heroType !== 'portfolio' && heroData.heroType !== 'about_us' && heroData.heroType !== 'contact_us' && heroData.heroType !== 'news') {
     throw new CustomError.BadRequestError("Invalid hero type")
   }
 
