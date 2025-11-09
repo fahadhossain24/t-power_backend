@@ -64,38 +64,39 @@ const createHero = asyncHandler(async (req: Request, res: Response) => {
         createdContent = await Hero.create(heroData);
       }
       break;
-    case 'ev_charger':
-      const existingEvCharger = await Hero.findOne({ heroType: 'ev_charger' });
-      if (existingEvCharger) {
+    case 'product':
+      const existingProduct = await Hero.findOne({ heroType: 'product' });
+      if (existingProduct) {
         if (files && files.singleHeroImage) {
           const images = await fileUploader(files as FileArray, `${heroData.heroType}-attachment-${Date.now()}`, 'singleHeroImage');
           heroData.singleHeroImage = images
         }
-        updatedContent = await Hero.findByIdAndUpdate(existingEvCharger._id, heroData);
+        updatedContent = await Hero.findByIdAndUpdate(existingProduct._id, heroData);
       } else {
         if (files && files?.singleHeroImage) {
           const images = await fileUploader(files as FileArray, `${heroData.heroType}-attachment-${Date.now()}`, 'singleHeroImage');
           heroData.singleHeroImage = images
         } else {
-          throw new CustomError.BadRequestError("Hero images are required for ev_charger")
+          throw new CustomError.BadRequestError("Hero images are required for product")
         }
         createdContent = await Hero.create(heroData);
       }
       break;
-    case 'kehua_inverter':
-      const existingKehuaInverter = await Hero.findOne({ heroType: 'kehua_inverter' });
-      if (existingKehuaInverter) {
+    case 'portfolio':
+      const existingPortfolio = await Hero.findOne({ heroType: 'portfolio' });
+      if (existingPortfolio) {
+        // console.log("existingPortfolio", existingPortfolio)
         if (files && files.singleHeroImage) {
           const images = await fileUploader(files as FileArray, `${heroData.heroType}-attachment-${Date.now()}`, 'singleHeroImage');
           heroData.singleHeroImage = images
         }
-        updatedContent = await Hero.findByIdAndUpdate(existingKehuaInverter._id, heroData);
+        updatedContent = await Hero.findByIdAndUpdate(existingPortfolio._id, heroData);
       } else {
         if (files && files?.singleHeroImage) {
           const images = await fileUploader(files as FileArray, `${heroData.heroType}-attachment-${Date.now()}`, 'singleHeroImage');
           heroData.singleHeroImage = images
         } else {
-          throw new CustomError.BadRequestError("Hero images are required for ev_charger")
+          throw new CustomError.BadRequestError("Hero images are required for portfolio")
         }
         createdContent = await Hero.create(heroData);
       }
@@ -113,7 +114,7 @@ const createHero = asyncHandler(async (req: Request, res: Response) => {
           const images = await fileUploader(files as FileArray, `${heroData.heroType}-attachment-${Date.now()}`, 'singleHeroImage');
           heroData.singleHeroImage = images
         } else {
-          throw new CustomError.BadRequestError("Hero images are required for ev_charger")
+          throw new CustomError.BadRequestError("Hero images are required for energy_storage")
         }
         createdContent = await Hero.create(heroData);
       }
@@ -131,7 +132,7 @@ const createHero = asyncHandler(async (req: Request, res: Response) => {
           const images = await fileUploader(files as FileArray, `${heroData.heroType}-attachment-${Date.now()}`, 'singleHeroImage');
           heroData.singleHeroImage = images
         } else {
-          throw new CustomError.BadRequestError("Hero images are required for ev_charger")
+          throw new CustomError.BadRequestError("Hero images are required for about_us")
         }
         createdContent = await Hero.create(heroData);
       }
@@ -149,7 +150,7 @@ const createHero = asyncHandler(async (req: Request, res: Response) => {
           const images = await fileUploader(files as FileArray, `${heroData.heroType}-attachment-${Date.now()}`, 'singleHeroImage');
           heroData.singleHeroImage = images
         } else {
-          throw new CustomError.BadRequestError("Hero images are required for ev_charger")
+          throw new CustomError.BadRequestError("Hero images are required for contact_us")
         }
         createdContent = await Hero.create(heroData);
       }
@@ -167,7 +168,7 @@ const createHero = asyncHandler(async (req: Request, res: Response) => {
           const images = await fileUploader(files as FileArray, `${heroData.heroType}-attachment-${Date.now()}`, 'singleHeroImage');
           heroData.singleHeroImage = images
         } else {
-          throw new CustomError.BadRequestError("Hero images are required for ev_charger")
+          throw new CustomError.BadRequestError("Hero images are required for software")
         }
         createdContent = await Hero.create(heroData);
       }
@@ -185,7 +186,7 @@ const createHero = asyncHandler(async (req: Request, res: Response) => {
           const images = await fileUploader(files as FileArray, `${heroData.heroType}-attachment-${Date.now()}`, 'singleHeroImage');
           heroData.singleHeroImage = images
         } else {
-          throw new CustomError.BadRequestError("Hero images are required for ev_charger")
+          throw new CustomError.BadRequestError("Hero images are required for news")
         }
         createdContent = await Hero.create(heroData);
       }
